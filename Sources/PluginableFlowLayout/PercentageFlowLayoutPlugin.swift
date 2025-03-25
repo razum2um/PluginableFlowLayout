@@ -74,6 +74,30 @@ open class PercentageFlowLayoutPlugin: FlowLayoutPlugin {
         alignment: PluginableFlowLayoutAlignment?,
         sectionInset: UIEdgeInsets
     ) -> PluginableFlowLayoutAttributes {
+        let context = createContext(
+            attributes: attributes,
+            collectionView: collectionView,
+            scrollDirection: scrollDirection,
+            alignment: alignment,
+            sectionInset: sectionInset
+        )
+
+        attributes.collectionVisibility = getCollectionVisibilityWithSign(context: context)
+        attributes.idealFrameVisibility = getIdealFrameVisibilityWithSign(context: context)
+        attributes.idealFrameAndCollectionVisibility = getIdealFrameAndCollectionVisibilityWithSign(context: context)
+
+        return attributes
+    }
+
+    // MARK: - Private Methods
+
+    private func createContext(
+        attributes: PluginableFlowLayoutAttributes,
+        collectionView: UICollectionView,
+        scrollDirection: UICollectionView.ScrollDirection,
+        alignment: PluginableFlowLayoutAlignment?,
+        sectionInset: UIEdgeInsets
+    ) -> Context {
         let collectionSizeValue = collectionView.bounds.size.value(scrollDirection: scrollDirection)
         let halfCollectionSizeValue = collectionSizeValue / 2
         let itemSizeValue = attributes.size.value(scrollDirection: scrollDirection)
@@ -83,7 +107,7 @@ open class PercentageFlowLayoutPlugin: FlowLayoutPlugin {
         let sectionInsetBeforeValue = sectionInset.beforeValue(scrollDirection: scrollDirection)
         let sectionInsetAfterValue = sectionInset.beforeValue(scrollDirection: scrollDirection)
 
-        let context = Context(
+        return Context(
             alignment: alignment,
             collectionSizeValue: collectionSizeValue,
             halfCollectionSizeValue: halfCollectionSizeValue,
@@ -94,18 +118,6 @@ open class PercentageFlowLayoutPlugin: FlowLayoutPlugin {
             sectionInsetBeforeValue: sectionInsetBeforeValue,
             sectionInsetAfterValue: sectionInsetAfterValue
         )
-
-        attributes.collectionVisibility = getCollectionVisibilityWithSign(
-            context: context
-        )
-        attributes.idealFrameVisibility = getIdealFrameVisibilityWithSign(
-            context: context
-        )
-        attributes.idealFrameAndCollectionVisibility = getIdealFrameAndCollectionVisibilityWithSign(
-            context: context
-        )
-
-        return attributes
     }
 
     // MARK: - Private Properties
